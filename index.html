@@ -1,0 +1,377 @@
+<html><head><base href="https://api.websim.ai/"><title>Video Chat Hub - Connect with 10 Users</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root {
+    --primary-color: #4a90e2;
+    --secondary-color: #f39c12;
+    --background-color: #f0f4f8;
+    --text-color: #333;
+    --card-background: #ffffff;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  h1 {
+    text-align: center;
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  #searchInput {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 25px;
+    margin-bottom: 2rem;
+    transition: var(--transition);
+  }
+
+  #searchInput:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+  }
+
+  #userList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .user-item {
+    background-color: var(--card-background);
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+  }
+
+  .user-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .user-name-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .user-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+  }
+
+  .user-name-input {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    border: none;
+    background-color: transparent;
+    padding: 0.2rem;
+    border-bottom: 2px solid var(--primary-color);
+    outline: none;
+    width: 150px;
+  }
+
+  .edit-name-btn {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .edit-name-btn:hover {
+    background-color: #e67e22;
+  }
+
+  .status {
+    padding: 0.3rem 0.6rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .status-available {
+    background-color: #2ecc71;
+    color: white;
+  }
+
+  .status-busy {
+    background-color: #e74c3c;
+    color: white;
+  }
+
+  .user-details {
+    margin-bottom: 1rem;
+  }
+
+  .user-details label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+    color: var(--primary-color);
+  }
+
+  .user-details input,
+  .user-details textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    background-color: #f9f9f9;
+  }
+
+  .availability-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .call-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .call-btn:hover {
+    background-color: #3a7cbd;
+  }
+
+  .call-btn svg {
+    margin-right: 0.5rem;
+  }
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Video Chat Hub - Connect with 10 Users</h1>
+        <input type="text" id="searchInput" placeholder="Search users by name, hobbies, or topics...">
+        <ul id="userList"></ul>
+    </div>
+
+    <script>
+        const users = [];
+        for (let i = 1; i <= 10; i++) {
+            users.push({
+                id: i,
+                name: `User${i}`,
+                availableUntil: '18:00',
+                hobbies: 'Reading, Cooking, Traveling',
+                topics: 'Technology, Science, Arts',
+                country: ''
+            });
+        }
+
+        function renderUsers() {
+            const userList = document.getElementById('userList');
+            userList.innerHTML = '';
+
+            users.forEach(user => {
+                const li = document.createElement('li');
+                li.className = 'user-item';
+                li.innerHTML = `
+                    <div class="user-header">
+                        <div class="user-name-container">
+                            <span class="user-name" id="name-${user.id}">${user.name}</span>
+                            <button class="edit-name-btn" onclick="editUserName(${user.id})">Edit</button>
+                        </div>
+                        <span class="status status-available">Available</span>
+                    </div>
+                    <div class="user-details">
+                        <label>Country:</label>
+                        <input type="text" id="country-${user.id}" value="${user.country}" onchange="updateCountry(${user.id}, this.value)">
+                    </div>
+                    <div class="user-details">
+                        <label>Available Until:</label>
+                        <div class="availability-container">
+                            <input type="time" id="availableUntil-${user.id}" value="${user.availableUntil}" onchange="updateAvailableUntil(${user.id}, this.value)">
+                        </div>
+                    </div>
+                    <div class="user-details">
+                        <label>Hobbies:</label>
+                        <input type="text" value="${user.hobbies}" readonly>
+                    </div>
+                    <div class="user-details">
+                        <label>Topics to Discuss:</label>
+                        <textarea readonly>${user.topics}</textarea>
+                    </div>
+                    <button class="call-btn" onclick="startGoogleMeetCall(${user.id})">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20.01 15.38C18.78 15.38 17.59 15.18 16.48 14.82C16.13 14.7 15.74 14.79 15.47 15.06L13.9 17.03C11.07 15.68 8.42 13.13 7.01 10.2L8.96 8.54C9.23 8.26 9.31 7.87 9.2 7.52C8.83 6.41 8.64 5.22 8.64 3.99C8.64 3.45 8.19 3 7.65 3H4.19C3.65 3 3 3.24 3 3.99C3 13.28 10.73 21 20.01 21C20.72 21 21 20.37 21 19.82V16.37C21 15.83 20.55 15.38 20.01 15.38Z" fill="currentColor"/>
+                        </svg>
+                        Call
+                    </button>
+                `;
+                userList.appendChild(li);
+            });
+        }
+
+        function startGoogleMeetCall(userId) {
+            const meetLink = `https://meet.google.com/new`;
+            window.open(meetLink, '_blank');
+        }
+
+        function updateCountry(userId, value) {
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                user.country = value;
+            }
+        }
+
+        function updateAvailableUntil(userId, value) {
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                user.availableUntil = value;
+            }
+        }
+
+        function editUserName(userId) {
+            const nameSpan = document.getElementById(`name-${userId}`);
+            const currentName = nameSpan.textContent;
+            const nameContainer = nameSpan.parentElement;
+            nameContainer.innerHTML = `
+                <input type="text" class="user-name-input" value="${currentName}">
+                <button class="edit-name-btn" onclick="saveUserName(${userId})">Save</button>
+            `;
+            const nameInput = nameContainer.querySelector('input');
+            nameInput.focus();
+            nameInput.select();
+
+            nameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    saveUserName(userId);
+                }
+            });
+        }
+
+        function saveUserName(userId) {
+            const nameContainer = document.querySelector(`#name-${userId}`).parentElement;
+            const nameInput = nameContainer.querySelector('input');
+            const newName = nameInput.value.trim();
+
+            if (newName) {
+                const user = users.find(u => u.id === userId);
+                user.name = newName;
+                nameContainer.innerHTML = `
+                    <span class="user-name" id="name-${userId}">${newName}</span>
+                    <button class="edit-name-btn" onclick="editUserName(${userId})">Edit</button>
+                `;
+            } else {
+                const originalName = users.find(u => u.id === userId).name;
+                nameContainer.innerHTML = `
+                    <span class="user-name" id="name-${userId}">${originalName}</span>
+                    <button class="edit-name-btn" onclick="editUserName(${userId})">Edit</button>
+                `;
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredUsers = users.filter(user => 
+                user.name.toLowerCase().includes(searchTerm) ||
+                user.hobbies.toLowerCase().includes(searchTerm) ||
+                user.topics.toLowerCase().includes(searchTerm) ||
+                user.country.toLowerCase().includes(searchTerm) ||
+                user.availableUntil.toLowerCase().includes(searchTerm)
+            );
+
+            renderFilteredUsers(filteredUsers);
+        });
+
+        function renderFilteredUsers(filteredUsers) {
+            const userList = document.getElementById('userList');
+            userList.innerHTML = '';
+
+            filteredUsers.forEach(user => {
+                const li = document.createElement('li');
+                li.className = 'user-item';
+                li.innerHTML = `
+                    <div class="user-header">
+                        <div class="user-name-container">
+                            <span class="user-name" id="name-${user.id}">${user.name}</span>
+                            <button class="edit-name-btn" onclick="editUserName(${user.id})">Edit</button>
+                        </div>
+                        <span class="status status-available">Available</span>
+                    </div>
+                    <div class="user-details">
+                        <label>Country:</label>
+                        <input type="text" id="country-${user.id}" value="${user.country}" onchange="updateCountry(${user.id}, this.value)">
+                    </div>
+                    <div class="user-details">
+                        <label>Available Until:</label>
+                        <div class="availability-container">
+                            <input type="time" id="availableUntil-${user.id}" value="${user.availableUntil}" onchange="updateAvailableUntil(${user.id}, this.value)">
+                        </div>
+                    </div>
+                    <div class="user-details">
+                        <label>Hobbies:</label>
+                        <input type="text" value="${user.hobbies}" readonly>
+                    </div>
+                    <div class="user-details">
+                        <label>Topics to Discuss:</label>
+                        <textarea readonly>${user.topics}</textarea>
+                    </div>
+                    <button class="call-btn" onclick="startGoogleMeetCall(${user.id})">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20.01 15.38C18.78 15.38 17.59 15.18 16.48 14.82C16.13 14.7 15.74 14.79 15.47 15.06L13.9 17.03C11.07 15.68 8.42 13.13 7.01 10.2L8.96 8.54C9.23 8.26 9.31 7.87 9.2 7.52C8.83 6.41 8.64 5.22 8.64 3.99C8.64 3.45 8.19 3 7.65 3H4.19C3.65 3 3 3.24 3 3.99C3 13.28 10.73 21 20.01 21C20.72 21 21 20.37 21 19.82V16.37C21 15.83 20.55 15.38 20.01 15.38Z" fill="currentColor"/>
+                        </svg>
+                        Call
+                    </button>
+                `;
+                userList.appendChild(li);
+            });
+        }
+
+        // Initial render
+        renderUsers();
+    </script>
+</body>
+</html>
